@@ -5,24 +5,25 @@ root = true
 
 #### Core EditorConfig Options ####
 
-# Indentation and spacing
-indent_size = 4
-indent_style = space
-tab_width = 4
-
 # New line preferences
 end_of_line = lf
 insert_final_newline = true
 
-[*.xml,*.yml]
+# Indentation and spacing
+indent_style = space
+
+[*.xml,*.yml,*.props,*.sln,*.csproj]
 
 # Indentation and spacing
 indent_size = 2
-indent_style = space
 tab_width = 2
 
 # C# files
 [*.cs]
+
+# Indentation and spacing
+indent_size = 4
+tab_width = 4
 
 #### .NET Code Actions ####
 
