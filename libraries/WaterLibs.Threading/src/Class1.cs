@@ -1,4 +1,1 @@
-namespace WaterLibs.Threading
-{
-    public class Class1 { }
-}
+namespace WaterLibs.Threading { }
