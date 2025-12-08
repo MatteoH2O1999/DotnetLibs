@@ -29,3 +29,22 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Run tests
         run: dotnet test ./DotnetLibs.slnx
+  build:
+    name: Test build and pack
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: recursive
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Build projects (Debug)
+        run: dotnet build -c Debug
+      - name: Build projects (Release)
+        run: dotnet build -c Release
+      - name: Pack projcts
+        run: dotnet pack -c Release
