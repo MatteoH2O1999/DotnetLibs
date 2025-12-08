@@ -107,6 +107,7 @@ jobs:
     runs-on: windows-latest
     permissions:
       id-token: write
+      pages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -127,8 +128,9 @@ jobs:
       - name: NuGet push
         continue-on-error: true
         id: push
-        run: dotnet nuget push packages/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push *.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+        working-directory: ./packages
       - name: Deploy documentation website to GitHub Pages
-        if: steps.push.conclusion == 'success'
+        if: steps.push.outcome == 'success'
         id: deployment
         uses: actions/deploy-pages@v4
