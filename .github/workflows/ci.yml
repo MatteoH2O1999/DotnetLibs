@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Run tests
@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Build projects (Debug)
@@ -58,7 +58,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Build docs website
@@ -114,7 +114,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Pack projcts
