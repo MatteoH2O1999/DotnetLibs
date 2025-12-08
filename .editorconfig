@@ -259,3 +259,6 @@ dotnet_naming_style.inizia_con_i.required_prefix = I
 dotnet_naming_style.inizia_con_i.required_suffix = 
 dotnet_naming_style.inizia_con_i.word_separator = 
 dotnet_naming_style.inizia_con_i.capitalization = pascal_case
+
+# Ide warnings
+dotnet_diagnostic.IDE0005.severity = warning

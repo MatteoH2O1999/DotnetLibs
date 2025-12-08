@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MattLibs.Threading
+namespace WaterLibs.Threading
 {
     public class Class1 { }
 }
