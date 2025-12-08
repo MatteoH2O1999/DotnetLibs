@@ -2,5 +2,5 @@
   <Folder Name="/Solution Items/">
     <File Path="Directory.Build.props" />
   </Folder>
-  <Project Path="libraries/MattLibs.Threading/src/MattLibs.Threading.csproj" />
+  <Project Path="libraries/WaterLibs.Threading/src/WaterLibs.Threading.csproj" />
 </Solution>

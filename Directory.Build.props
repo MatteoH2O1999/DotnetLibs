@@ -1,15 +1,36 @@
 <Project>
-    <PropertyGroup>
-        <PackageOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))\packages</PackageOutputPath>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <Deterministic>true</Deterministic>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <PackageOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))\packages</PackageOutputPath>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet tool restore" WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
+    <Exec Command="dotnet csharpier check ." WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
+    <Exec
+      Command="dotnet format style --verify-no-changes --severity info -v n ."
+      Condition="'$(Configuration)'=='Release'"
+      WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))"
+    />
+    <Exec
+      Command="dotnet format analyzers --verify-no-changes --severity info -v n ."
+      Condition="'$(Configuration)'=='Release'"
+      WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))"
+    />
+  </Target>
+
+  <Target Name="Lint code" BeforeTargets="ResolveProjectReferences">
+    <Exec Command="dotnet tool restore" WorkingDirectory="." Condition="'$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true'" />
+    <Exec Command="dotnet csharpier format ." WorkingDirectory="." Condition="'$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true'" />
+    <Message Text="Not a design-time build. Skip running csharpier in write mode." Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'" Importance="high" />
+  </Target>
 </Project>
