@@ -8,8 +8,18 @@ updates:
     interval: daily
     time: '00:00'
   open-pull-requests-limit: 10
-  reviewers:
+  assignees:
     - MatteoH2O1999
+  commit-message:
+    prefix: fix
+    prefix-development: chore
+    include: scope
+- package-ecosystem: nuget
+  directory: '/.config/'
+  schedule:
+    interval: daily
+    time: '00:00'
+  open-pull-requests-limit: 10
   assignees:
     - MatteoH2O1999
   commit-message:
