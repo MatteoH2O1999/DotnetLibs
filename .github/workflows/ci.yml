@@ -48,6 +48,28 @@ jobs:
       - name: Pack projcts
         run: dotnet pack ./DotnetLibs.slnx -c Release
 
+  docs:
+    name: Build documentation website
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: recursive
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Build docs website
+        run: |
+          dotnet tool restore
+          dotnet docfx ./docs/docfx.json
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs/_site
+
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
@@ -78,8 +100,10 @@ jobs:
   publish:
     if: github.ref == 'refs/heads/master'
     name: Publish packages to Nuget
-    needs: [build, test, codeql]
-    environment: release
+    needs: [build, test, codeql, docs]
+    environment:
+      name: release
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: windows-latest
     permissions:
       id-token: write
@@ -102,3 +126,6 @@ jobs:
           user: ${{ secrets.NUGET_USER }}
       - name: NuGet push
         run: dotnet nuget push packages/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicates
+      - name: Deploy documentation website to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
