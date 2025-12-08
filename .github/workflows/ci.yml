@@ -5,8 +5,6 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
 
 permissions: read-all
 
@@ -29,6 +27,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Run tests
         run: dotnet test ./DotnetLibs.slnx
+
   build:
     name: Test build and pack
     runs-on: windows-latest
@@ -43,8 +42,93 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Build projects (Debug)
-        run: dotnet build -c Debug
+        run: dotnet build ./DotnetLibs.slnx -c Debug
       - name: Build projects (Release)
-        run: dotnet build -c Release
+        run: dotnet build ./DotnetLibs.slnx -c Release
       - name: Pack projcts
-        run: dotnet pack -c Release
+        run: dotnet pack ./DotnetLibs.slnx -c Release
+
+  docs:
+    name: Build documentation website
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: recursive
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Build docs website
+        run: |
+          dotnet tool restore
+          dotnet docfx ./docs/docfx.json
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs/_site
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: csharp
+            build-mode: none
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-extended
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"
+
+  publish:
+    if: github.ref == 'refs/heads/master'
+    name: Publish packages to Nuget
+    needs: [build, test, codeql, docs]
+    environment:
+      name: release
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: windows-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: recursive
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Pack projcts
+        run: dotnet pack ./DotnetLibs.slnx -c Release
+      - name: NuGet login
+        uses: NuGet/login@d22cc5f58ff5b88bf9bd452535b4335137e24544
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: NuGet push
+        continue-on-error: true
+        id: push
+        run: dotnet nuget push packages/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+      - name: Deploy documentation website to GitHub Pages
+        if: steps.push.conclusion == 'success'
+        id: deployment
+        uses: actions/deploy-pages@v4
