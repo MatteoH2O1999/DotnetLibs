@@ -3,7 +3,7 @@
     <Description>
             A .NET library that contains utilities for concurrent programming.
         </Description>
-    <PackageTags>threading parallel concurrent lock semaphore</PackageTags>
+    <PackageTags>threading;parallel;concurrent;lock;semaphore</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup>
