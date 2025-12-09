@@ -49,13 +49,42 @@ namespace WaterLibs.Threading
             return borrowed;
         }
 
-        public async Task<IDisposable> LockAsync(ulong quantity)
+        public async Task<IDisposable> LockAsync(
+            ulong quantity,
+            int millisecondsBusyWaitInterval,
+            CancellationToken cancellationToken
+        )
         {
             IDisposable? borrowed = this.TryLock(quantity);
             while (borrowed is null)
             {
+                await Task.Delay(millisecondsBusyWaitInterval, cancellationToken).ConfigureAwait(false);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    throw new OperationCanceledException(
+                        "Operation was canceled before lock was acquired",
+                        cancellationToken
+                    );
+                }
                 borrowed = this.TryLock(quantity);
+            }
+            return borrowed;
+        }
+
+        public async Task<IDisposable> LockAsync(ulong quantity, CancellationToken cancellationToken)
+        {
+            IDisposable? borrowed = this.TryLock(quantity);
+            while (borrowed is null)
+            {
                 await Task.Yield();
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    throw new OperationCanceledException(
+                        "Operation was canceled before lock was acquired",
+                        cancellationToken
+                    );
+                }
+                borrowed = this.TryLock(quantity);
             }
             return borrowed;
         }
