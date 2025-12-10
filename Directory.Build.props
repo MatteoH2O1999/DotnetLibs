@@ -5,9 +5,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Deterministic>true</Deterministic>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>0.0.2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -29,7 +27,7 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(ProjectPath.Replace('\', '/').Contains('/test/')) == 'false'">
     <None Include="..\README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
