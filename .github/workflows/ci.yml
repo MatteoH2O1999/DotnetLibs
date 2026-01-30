@@ -104,7 +104,7 @@ jobs:
           - language: actions
             build-mode: none
           - language: csharp
-            build-mode: none
+            build-mode: autobuild
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
