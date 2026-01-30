@@ -30,25 +30,4 @@
   <ItemGroup Condition="$(ProjectPath.Replace('\', '/').Contains('/test/')) == 'false'">
     <None Include="..\README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="dotnet tool restore" WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
-    <Exec Command="dotnet csharpier check ." WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
-    <Exec
-      Command="dotnet format style --verify-no-changes --severity info -v n ."
-      Condition="'$(Configuration)'=='Release'"
-      WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))"
-    />
-    <Exec
-      Command="dotnet format analyzers --verify-no-changes --severity info -v n ."
-      Condition="'$(Configuration)'=='Release'"
-      WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))"
-    />
-  </Target>
-
-  <Target Name="Lint code" BeforeTargets="ResolveProjectReferences">
-    <Exec Command="dotnet tool restore" WorkingDirectory="." Condition="'$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true'" />
-    <Exec Command="dotnet csharpier format ." WorkingDirectory="." Condition="'$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true'" />
-    <Message Text="Not a design-time build. Skip running csharpier in write mode." Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'" Importance="normal" />
-  </Target>
 </Project>

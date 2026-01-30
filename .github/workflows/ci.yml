@@ -12,6 +12,28 @@ env:
   DOTNET_VERSION: "10.x"
 
 jobs:
+  lint:
+    name: Lint code
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          submodules: recursive
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore tools
+        run: dotnet tool restore
+      - name: Run csharpier code style formattter
+        run: dotnet csharpier check .
+      - name: Run .NET style formatter
+        run: dotnet format style --verify-no-changes --severity info -v n .
+      - name: Run .NET analyzers
+        run: dotnet format analyzers --verify-no-changes --severity info -v n .
+
   test:
     name: Test libraries
     runs-on: windows-latest
@@ -100,7 +122,7 @@ jobs:
   publish:
     if: github.ref == 'refs/heads/master'
     name: Publish packages to Nuget
-    needs: [build, test, codeql, docs]
+    needs: [lint, build, test, codeql, docs]
     environment:
       name: release
       url: ${{ steps.deployment.outputs.page_url }}
