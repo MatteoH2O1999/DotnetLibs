@@ -26,15 +26,19 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(ProjectPath.Replace('\', '/').Contains('/test/')) == 'false'">
+  <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'false'">
     <None Include="..\README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(ProjectPath.Replace('\', '/').Contains('/test/')) == 'true'">
+  <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'true'">
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
     <Using Include="Xunit" />
   </ItemGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWIth('/test/$(MSBuildProjectFile)')) == 'true'">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
 </Project>
