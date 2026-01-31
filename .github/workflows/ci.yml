@@ -14,7 +14,7 @@ env:
 jobs:
   lint:
     name: Lint code
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -28,7 +28,7 @@ jobs:
       - name: Restore tools
         run: dotnet tool restore
       - name: Run csharpier code style formattter
-        run: dotnet csharpier check .
+        run: dotnet csharpier check . --log-level Debug
       - name: Run .NET style formatter
         run: dotnet format style --verify-no-changes --severity info -v n .
       - name: Run .NET analyzers
@@ -36,7 +36,11 @@ jobs:
 
   test:
     name: Test libraries
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -47,12 +51,18 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Run tests
-        run: dotnet test -t ./DotnetLibs.slnx
+      - name: Build tests
+        run: |
+          dotnet build ./DotnetLibs.slnx -c Debug 
+          dotnet build ./DotnetLibs.slnx -c Release
+      - name: Run tests (Debug)
+        run: dotnet test ./DotnetLibs.slnx -c Debug -v n --no-build -m:1
+      - name: Run tests (Release)
+        run: dotnet test ./DotnetLibs.slnx -c Release -v n --no-build -m:1
 
   build:
     name: Test build and pack
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -64,11 +74,11 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Build projects (Debug)
-        run: dotnet build ./DotnetLibs.slnx -c Debug
+        run: dotnet build ./DotnetLibs.slnx -c Debug /p:TreatWarningsAsErrors=true
       - name: Build projects (Release)
-        run: dotnet build ./DotnetLibs.slnx -c Release
+        run: dotnet build ./DotnetLibs.slnx -c Release /p:TreatWarningsAsErrors=true
       - name: Pack projcts
-        run: dotnet pack ./DotnetLibs.slnx -c Release
+        run: dotnet pack ./DotnetLibs.slnx -c Release /p:TreatWarningsAsErrors=true
 
   docs:
     name: Build documentation website
@@ -126,7 +136,7 @@ jobs:
     environment:
       name: release
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       pages: write
