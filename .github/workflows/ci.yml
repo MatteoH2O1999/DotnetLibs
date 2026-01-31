@@ -51,10 +51,12 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore projects
+        run: dotnet restore ./DotnetLibs.slnx
       - name: Build tests
         run: |
-          dotnet build ./DotnetLibs.slnx -c Debug 
-          dotnet build ./DotnetLibs.slnx -c Release
+          dotnet build ./DotnetLibs.slnx -c Debug --no-restore
+          dotnet build ./DotnetLibs.slnx -c Release --no-restore
       - name: Run tests (Debug)
         run: dotnet test ./DotnetLibs.slnx -c Debug -v n --no-build -m:1
       - name: Run tests (Release)
@@ -73,12 +75,14 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore projects
+        run: dotnet restore ./DotnetLibs.slnx
       - name: Build projects (Debug)
-        run: dotnet build ./DotnetLibs.slnx -c Debug /p:TreatWarningsAsErrors=true
+        run: dotnet build ./DotnetLibs.slnx -c Debug /p:TreatWarningsAsErrors=true --no-restore
       - name: Build projects (Release)
-        run: dotnet build ./DotnetLibs.slnx -c Release /p:TreatWarningsAsErrors=true
+        run: dotnet build ./DotnetLibs.slnx -c Release /p:TreatWarningsAsErrors=true --no-restore
       - name: Pack projcts
-        run: dotnet pack ./DotnetLibs.slnx -c Release /p:TreatWarningsAsErrors=true
+        run: dotnet pack ./DotnetLibs.slnx -c Release /p:TreatWarningsAsErrors=true --no-build
 
   docs:
     name: Build documentation website
