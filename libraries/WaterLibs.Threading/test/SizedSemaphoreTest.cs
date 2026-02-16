@@ -20,9 +20,9 @@
 
 namespace WaterLibs.Threading.Test
 {
-    public class UnitTest1
+    public class SizedSemaphoreTest
     {
         [Fact]
-        public void Test1() { }
+        public void Dummy() { }
     }
 }
