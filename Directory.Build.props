@@ -5,52 +5,72 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Deterministic>true</Deterministic>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>0.0.2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Matteo Dell'Acqua</Authors>
     <PackageVersion>$(Version)</PackageVersion>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
     <PackageProjectUrl>https://matteoh2o1999.github.io/DotnetLibs</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MatteoH2O1999/DotnetLibs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>Copyright © Matteo Dell'Acqua 2025-$([System.DateTime]::Now.ToString("yyyy"))</Copyright>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'false'">
     <None Include="..\README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="dotnet tool restore" WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
-    <Exec Command="dotnet csharpier check ." WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
-    <Exec
-      Command="dotnet format style --verify-no-changes --severity info -v n ."
-      Condition="'$(Configuration)'=='Release'"
-      WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))"
-    />
-    <Exec
-      Command="dotnet format analyzers --verify-no-changes --severity info -v n ."
-      Condition="'$(Configuration)'=='Release'"
-      WorkingDirectory="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))"
-    />
-  </Target>
+  <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'true'">
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSDKVersion)" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(VisualStudioRunnerVersion)" />
+    <Using Include="Xunit" />
+  </ItemGroup>
 
-  <Target Name="Lint code" BeforeTargets="ResolveProjectReferences">
-    <Exec Command="dotnet tool restore" WorkingDirectory="." Condition="'$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true'" />
-    <Exec Command="dotnet csharpier format ." WorkingDirectory="." Condition="'$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true'" />
-    <Message Text="Not a design-time build. Skip running csharpier in write mode." Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'" Importance="normal" />
-  </Target>
+  <PropertyGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWIth('/test/$(MSBuildProjectFile)')) == 'true'">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NetVersionString>$([System.Text.RegularExpressions.Regex]::Match('$(TargetFramework)', '\d+'))</NetVersionString>
+    <NetVersion Condition="'$(NetVersionString)' != ''">$(NetVersionString)</NetVersion>
+    <NetVersion Condition="'$(NetVersionString)' == ''">0</NetVersion>
+
+    <IsNetStandard>False</IsNetStandard>
+    <IsNetStandard Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1'">True</IsNetStandard>
+    <IsNetFramework>False</IsNetFramework>
+    <IsNetFramework Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net\d+$')) == 'true'">True</IsNetFramework>
+    <IsNetCore>False</IsNetCore>
+    <IsNetCore Condition="'$(IsNetStandard)' == 'False' AND '$(IsNetFramework)' == 'False'">True</IsNetCore>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TestSDKVersion>18.0.1</TestSDKVersion>
+    <TestSDKVersion Condition="'$(IsNetCore)' == 'True' AND '$(NetVersion)' &lt; 8">17.13.0</TestSDKVersion>
+
+    <VisualStudioRunnerVersion>3.1.5</VisualStudioRunnerVersion>
+    <VisualStudioRunnerVersion Condition="'$(IsNetCore)' == 'True' AND '$(NetVersion)' &lt; 8">2.8.2</VisualStudioRunnerVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NetStandard2TestFrameworks>net472;net48;net481;net6.0;net8.0;net10.0</NetStandard2TestFrameworks>
+    <NetStandard2TestFrameworks Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net6.0;net8.0;net10.0</NetStandard2TestFrameworks>
+  </PropertyGroup>
 </Project>

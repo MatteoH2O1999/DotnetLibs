@@ -7,3 +7,5 @@ overrides:
     indentSize: 2
     printWidth: 200
     formatter: "xml"
+    endOfLine: lf
+    useTabs: false
