@@ -36,9 +36,9 @@
 
   <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'true'">
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSDKVersion)" />
     <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(VisualStudioRunnerVersion)" />
     <Using Include="Xunit" />
   </ItemGroup>
 
@@ -46,5 +46,30 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NetVersionString>$([System.Text.RegularExpressions.Regex]::Match('$(TargetFramework)', '\d+'))</NetVersionString>
+    <NetVersion Condition="'$(NetVersionString)' != ''">$(NetVersionString)</NetVersion>
+    <NetVersion Condition="'$(NetVersionString)' == ''">0</NetVersion>
+
+    <IsNetStandard>False</IsNetStandard>
+    <IsNetStandard Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1'">True</IsNetStandard>
+    <IsNetFramework>False</IsNetFramework>
+    <IsNetFramework Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net\d+$')) == 'true'">True</IsNetFramework>
+    <IsNetCore>False</IsNetCore>
+    <IsNetCore Condition="'$(IsNetStandard)' == 'False' AND '$(IsNetFramework)' == 'False'">True</IsNetCore>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TestSDKVersion>18.0.1</TestSDKVersion>
+    <TestSDKVersion Condition="'$(IsNetCore)' == 'True' AND '$(NetVersion)' &lt; 8">17.13.0</TestSDKVersion>
+
+    <VisualStudioRunnerVersion>3.1.5</VisualStudioRunnerVersion>
+    <VisualStudioRunnerVersion Condition="'$(IsNetCore)' == 'True' AND '$(NetVersion)' &lt; 8">2.8.2</VisualStudioRunnerVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NetStandard2TestFrameworks>net472;net48;net481;net6.0;net8.0;net10.0</NetStandard2TestFrameworks>
   </PropertyGroup>
 </Project>
