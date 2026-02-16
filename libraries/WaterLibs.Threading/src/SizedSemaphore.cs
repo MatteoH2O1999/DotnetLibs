@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma warning disable IDE0130 // Namespace does not match folder structure
-namespace System.Threading
-#pragma warning restore IDE0130 // Namespace does not match folder structure
+using System.Threading;
+
+namespace WaterLibs.Threading
 {
     /// <summary>
     /// Limits the number of threads that can access a resource or pool of resources concurrently.
