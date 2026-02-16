@@ -1,129 +1,33 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+// Copyright (C) 2025-2026 Matteo Dell'Acqua
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+// the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
-namespace WaterLibs.Threading
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace System.Threading
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
-    public class SizedSemaphore
-    {
-        private readonly ulong size;
-        private ulong current;
-        private readonly object lockObject;
-
-        public SizedSemaphore(ulong size)
-        {
-            this.size = size;
-            this.current = size;
-            this.lockObject = new();
-        }
-
-        public IDisposable? TryLock(ulong quantity)
-        {
-            if (quantity > this.size)
-            {
-                throw new ArgumentException(
-                    $"Borrowed quantity must be less or equal than the semaphore size ({this.size}). Got {quantity}.",
-                    nameof(quantity)
-                );
-            }
-
-            bool borrowed = false;
-            lock (this.lockObject)
-            {
-                if (quantity <= this.current)
-                {
-                    this.current -= quantity;
-                    borrowed = true;
-                }
-            }
-            return borrowed ? new Locked(this, quantity) : null;
-        }
-
-        public IDisposable Lock(ulong quantity)
-        {
-            IDisposable? borrowed = null;
-            while (borrowed is null)
-            {
-                borrowed = this.TryLock(quantity);
-            }
-            return borrowed;
-        }
-
-        public async Task<IDisposable> LockAsync(
-            ulong quantity,
-            int millisecondsBusyWaitInterval,
-            CancellationToken cancellationToken
-        )
-        {
-            IDisposable? borrowed = this.TryLock(quantity);
-            while (borrowed is null)
-            {
-                await Task.Delay(millisecondsBusyWaitInterval, cancellationToken).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    throw new OperationCanceledException(
-                        "Operation was canceled before lock was acquired",
-                        cancellationToken
-                    );
-                }
-                borrowed = this.TryLock(quantity);
-            }
-            return borrowed;
-        }
-
-        public async Task<IDisposable> LockAsync(ulong quantity, CancellationToken cancellationToken)
-        {
-            IDisposable? borrowed = this.TryLock(quantity);
-            while (borrowed is null)
-            {
-                await Task.Yield();
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    throw new OperationCanceledException(
-                        "Operation was canceled before lock was acquired",
-                        cancellationToken
-                    );
-                }
-                borrowed = this.TryLock(quantity);
-            }
-            return borrowed;
-        }
-
-        private void Unlock(ulong quantity)
-        {
-            lock (this.lockObject)
-            {
-                this.current += quantity;
-            }
-        }
-
-        private sealed class Locked : IDisposable
-        {
-            private readonly SizedSemaphore semaphore;
-            private readonly ulong borrowed;
-            private bool disposed;
-
-            public Locked(SizedSemaphore semaphore, ulong borrowed)
-            {
-                this.semaphore = semaphore;
-                this.borrowed = borrowed;
-                this.disposed = false;
-            }
-
-            public void Dispose()
-            {
-                if (!this.disposed)
-                {
-                    this.semaphore.Unlock(this.borrowed);
-                    this.disposed = true;
-                }
-                GC.SuppressFinalize(this);
-            }
-
-            ~Locked()
-            {
-                this.Dispose();
-            }
-        }
-    }
+    /// <summary>
+    /// Limits the number of threads that can access a resource or pool of resources concurrently.
+    /// </summary>
+    /// <remarks>
+    /// Unlike <see cref="Semaphore"/>, it can be locked with a custom size, so that each request
+    /// locks a different quantity of a resource.
+    /// </remarks>
+    public class SizedSemaphore { }
 }
