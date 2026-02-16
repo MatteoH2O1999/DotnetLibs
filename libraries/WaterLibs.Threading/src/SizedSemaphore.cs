@@ -18,7 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace WaterLibs.Threading
 {
@@ -29,5 +32,50 @@ namespace WaterLibs.Threading
     /// Unlike <see cref="Semaphore"/>, it can be locked with a custom size, so that each request
     /// locks a different quantity of a resource.
     /// </remarks>
-    public class SizedSemaphore { }
+    /// <param name="size">
+    /// The maximum number of request that can be granted concurrently.
+    /// </param>
+    public sealed class SizedSemaphore(ulong size) : ISizedSemaphore
+    {
+        private ulong current = size;
+        private readonly ulong size = size;
+        private readonly object internalLock = new();
+
+        void ISizedSemaphore.Free(ulong quantity)
+        {
+            Debug.Assert(quantity <= this.size);
+            lock (this.internalLock)
+            {
+                this.current += quantity;
+                Debug.Assert(this.current >= this.size);
+                Monitor.PulseAll(this.internalLock);
+            }
+        }
+
+        public LockedResource Wait(ulong quantity)
+        {
+            if (quantity > this.size)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(quantity),
+                    $"Requested {quantity} on a semaphore of size {this.size}."
+                );
+            }
+            lock (this.internalLock)
+            {
+                while (this.current < quantity)
+                {
+                    Monitor.Wait(this.internalLock);
+                }
+                this.current -= quantity;
+                Monitor.PulseAll(this.internalLock);
+            }
+            return new(this, quantity);
+        }
+
+        public Task<LockedResource> WaitAsync(ulong quantity)
+        {
+            return Task.Run(() => Task.FromResult(this.Wait(quantity)));
+        }
+    }
 }
