@@ -51,6 +51,13 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET Runtimes
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.x
+            8.x
+            6.x
       - name: Restore projects
         run: dotnet restore ./DotnetLibs.slnx
       - name: Build tests
