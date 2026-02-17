@@ -42,11 +42,11 @@ namespace WaterLibs.Threading
             this.disposed = false;
         }
 
-        private void Dispose(bool disposing)
+        /// <inheritdoc/>
+        public void Dispose()
         {
             if (!this.disposed)
             {
-                if (disposing) { }
                 this.semaphore.Free(Quantity);
                 this.disposed = true;
             }
@@ -55,14 +55,7 @@ namespace WaterLibs.Threading
         /// <inheritdoc/>
         ~LockedResource()
         {
-            this.Dispose(disposing: false);
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            this.Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            this.Dispose();
         }
     }
 }
