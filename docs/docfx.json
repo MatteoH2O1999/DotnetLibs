@@ -20,15 +20,16 @@
           "**/*.{md,yml}"
         ],
         "exclude": [
-          "_site/**"
+          "_site/**",
+          "index/index.md"
         ]
-      }
-    ],
-    "resource": [
+      },
       {
         "files": [
-          "images/**"
-        ]
+          "index.md"
+        ],
+        "src": "index",
+        "dest": "api"
       }
     ],
     "output": "_site",
@@ -39,6 +40,8 @@
     "globalMetadata": {
       "_appName": "WaterLibs",
       "_appTitle": "WaterLibs",
+      "_appFooter": "© Matteo Dell'Acqua. All rights reserved.",
+      "_disableContribution": true,
       "_enableSearch": true,
       "pdf": true
     }
