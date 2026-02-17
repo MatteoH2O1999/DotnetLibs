@@ -34,7 +34,7 @@ namespace WaterLibs.Threading
     /// </remarks>
     /// <example>
     /// <code>
-    /// SizedSemaphore semaphore = new(100);
+    /// SizedSemaphore semaphore = new SizedSemaphore(100);
     /// using (LockedResource locked = semaphore.Wait(5))
     /// {
     ///     // Use 5 of the managed resource

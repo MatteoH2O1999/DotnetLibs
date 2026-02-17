@@ -25,6 +25,23 @@ namespace WaterLibs.Threading
     /// <summary>
     /// A lock on a certain amount of a certain resource.
     /// </summary>
+    /// <remarks>
+    /// <see cref="Dispose"/> must be called to free the locked resource.
+    /// </remarks>
+    /// <example>
+    /// The destructor of this class calls the <see cref="Dispose"/> method,
+    /// but is dependant on garbage collection.
+    /// <br/>
+    /// To ensure prompt resource release, it is advisable to take advantage
+    /// of the <see langword="using"/> syntax to handle the call to <see cref="Dispose"/>.
+    /// <code>
+    /// using (LockedResource lockedResource = semaphore.Wait(5))
+    /// {
+    ///     // Use the resource
+    /// }
+    /// // The resource is released
+    /// </code>
+    /// </example>
     public sealed class LockedResource : IDisposable
     {
         private readonly ISizedSemaphore semaphore;
