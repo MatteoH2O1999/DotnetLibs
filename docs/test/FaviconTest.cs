@@ -25,20 +25,24 @@ namespace Docs.Test
         [Fact]
         public async Task Favicon_ComparedWithMainWebsite_IsTheSame()
         {
-            byte[] expected = await this.GetExpectedFavicon();
-            byte[] actual = await this.GetActualFavicon();
+            byte[] expected = await GetExpectedFavicon();
+            byte[] actual = await GetActualFavicon();
 
             Assert.Equal(expected, actual);
         }
 
-        private async Task<byte[]> GetActualFavicon()
+        private static async Task<byte[]> GetActualFavicon()
         {
             return [];
         }
 
-        private async Task<byte[]> GetExpectedFavicon()
+        private static async Task<byte[]> GetExpectedFavicon()
         {
-            return [];
+            using HttpClient httpClient = new();
+            using HttpRequestMessage request = new(HttpMethod.Get, "https://matteoh2o1999.github.io/favicon.svg");
+            using HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+            responseMessage.EnsureSuccessStatusCode();
+            return await responseMessage.Content.ReadAsByteArrayAsync();
         }
     }
 }
