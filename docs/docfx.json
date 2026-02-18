@@ -32,6 +32,13 @@
         "dest": "api"
       }
     ],
+    "resource": [
+      {
+        "files": [
+          "favicon.svg"
+        ]
+      }
+    ],
     "output": "_site",
     "template": [
       "default",
@@ -41,6 +48,8 @@
       "_appName": "WaterLibs",
       "_appTitle": "WaterLibs",
       "_appFooter": "© Matteo Dell'Acqua. All rights reserved.",
+      "_appLogoPath": "favicon.svg",
+      "_appFaviconPath": "favicon.svg",
       "_disableContribution": true,
       "_enableSearch": true,
       "pdf": true
