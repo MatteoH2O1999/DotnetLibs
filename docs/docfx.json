@@ -21,6 +21,7 @@
         ],
         "exclude": [
           "_site/**",
+          "test/**",
           "index/index.md"
         ]
       },

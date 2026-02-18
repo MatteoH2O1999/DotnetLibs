@@ -46,6 +46,7 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -72,5 +73,6 @@
   <PropertyGroup>
     <NetStandard2TestFrameworks>net472;net48;net481;net6.0;net8.0;net10.0</NetStandard2TestFrameworks>
     <NetStandard2TestFrameworks Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net6.0;net8.0;net10.0</NetStandard2TestFrameworks>
+    <LatestTestFramework>net10.0</LatestTestFramework>
   </PropertyGroup>
 </Project>
