@@ -26,17 +26,13 @@ namespace Docs.Test
     public class FaviconTest
     {
         [TestMethod]
+        [DeploymentItem("Deployment/favicon.svg")]
         public async Task Favicon_ComparedWithMainWebsite_IsTheSame()
         {
             byte[] expected = await GetExpectedFavicon();
-            byte[] actual = await GetActualFavicon();
+            byte[] actual = File.ReadAllBytes("Deployment/favicon.svg");
 
             actual.Should().Equal(expected);
-        }
-
-        private static async Task<byte[]> GetActualFavicon()
-        {
-            return [];
         }
 
         private static async Task<byte[]> GetExpectedFavicon()
