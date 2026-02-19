@@ -65,9 +65,9 @@ jobs:
           dotnet build ./DotnetLibs.slnx -c Debug --no-restore
           dotnet build ./DotnetLibs.slnx -c Release --no-restore
       - name: Run tests (Debug)
-        run: dotnet test ./DotnetLibs.slnx -c Debug -v n --no-build -m:1
+        run: dotnet test ./DotnetLibs.slnx -c Debug -v n --no-build -m:1 --consoleLoggerParameters:"NoSummary;ErrorsOnly;ForceConsoleColor" --nologo
       - name: Run tests (Release)
-        run: dotnet test ./DotnetLibs.slnx -c Release -v n --no-build -m:1
+        run: dotnet test ./DotnetLibs.slnx -c Release -v n --no-build -m:1 --consoleLoggerParameters:"NoSummary;ErrorsOnly;ForceConsoleColor" --nologo
 
   build:
     name: Test build and pack

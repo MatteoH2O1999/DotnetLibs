@@ -18,17 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using AwesomeAssertions;
+
 namespace Docs.Test
 {
+    [TestClass]
     public class FaviconTest
     {
-        [Fact]
+        [TestMethod]
         public async Task Favicon_ComparedWithMainWebsite_IsTheSame()
         {
             byte[] expected = await GetExpectedFavicon();
             byte[] actual = await GetActualFavicon();
 
-            Assert.Equal(expected, actual);
+            actual.Should().Equal(expected);
         }
 
         private static async Task<byte[]> GetActualFavicon()
