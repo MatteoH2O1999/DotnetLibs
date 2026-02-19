@@ -50,6 +50,7 @@
       "_appTitle": "WaterLibs",
       "_appFooter": "© Matteo Dell'Acqua. All rights reserved.",
       "_appLogoPath": "favicon.svg",
+      "_appLogoUrl": "/api",
       "_appFaviconPath": "favicon.svg",
       "_disableContribution": true,
       "_enableSearch": true,
