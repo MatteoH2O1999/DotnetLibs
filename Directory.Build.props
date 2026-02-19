@@ -38,6 +38,7 @@
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="MSTest" Version="$(MSTestVersion)" />
     <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
   </ItemGroup>
 
   <PropertyGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWIth('/test/$(MSBuildProjectFile)')) == 'true'">
