@@ -62,8 +62,8 @@ jobs:
         run: dotnet restore ./DotnetLibs.slnx
       - name: Build tests
         run: |
-          dotnet build ./DotnetLibs.slnx -c Debug --no-restore
-          dotnet build ./DotnetLibs.slnx -c Release --no-restore
+          dotnet build ./DotnetLibs.slnx -c Debug --no-restore /p:Deterministic=false
+          dotnet build ./DotnetLibs.slnx -c Release --no-restore /p:Deterministic=false
       - name: Run tests (Debug)
         run: >
           dotnet test ./DotnetLibs.slnx
