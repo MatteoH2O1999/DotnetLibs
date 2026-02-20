@@ -73,7 +73,7 @@ jobs:
           -m:1
           --consoleLoggerParameters:"NoSummary;ErrorsOnly;ForceConsoleColor"
           --nologo
-          --logger GitHubActions
+          --logger:"GitHubActions;summary-include-passed=false"
           --
           RunConfiguration.CollectSourceInformation=true
       - name: Run tests (Release)
@@ -85,7 +85,7 @@ jobs:
           -m:1
           --consoleLoggerParameters:"NoSummary;ErrorsOnly;ForceConsoleColor"
           --nologo
-          --logger GitHubActions
+          --logger:"GitHubActions;summary-include-passed=false"
           --
           RunConfiguration.CollectSourceInformation=true
 
