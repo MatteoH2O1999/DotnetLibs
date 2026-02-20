@@ -18,12 +18,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace WaterLibs.Threading.Test
+using AwesomeAssertions;
+
+namespace Docs.Test
 {
     [TestClass]
-    public class SizedSemaphoreTest
+    public class FaviconTest
     {
         [TestMethod]
-        public void Dummy() { }
+        [DeploymentItem("Deployment/favicon.svg")]
+        public async Task Favicon_ComparedWithMainWebsite_IsTheSame()
+        {
+            byte[] expected = await GetExpectedFavicon();
+            byte[] actual = File.ReadAllBytes("Deployment/favicon.svg");
+
+            actual.Should().Equal(expected);
+        }
+
+        private static async Task<byte[]> GetExpectedFavicon()
+        {
+            using HttpClient httpClient = new();
+            using HttpRequestMessage request = new(HttpMethod.Get, "https://matteoh2o1999.github.io/favicon.svg");
+            using HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+            responseMessage.EnsureSuccessStatusCode();
+            return await responseMessage.Content.ReadAsByteArrayAsync();
+        }
     }
 }

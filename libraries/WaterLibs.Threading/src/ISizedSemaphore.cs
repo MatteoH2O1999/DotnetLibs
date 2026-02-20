@@ -18,12 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace WaterLibs.Threading.Test
+namespace WaterLibs.Threading
 {
-    [TestClass]
-    public class SizedSemaphoreTest
+    internal interface ISizedSemaphore
     {
-        [TestMethod]
-        public void Dummy() { }
+        internal void Free(ulong quantity);
     }
 }

@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(LatestTestFramework)</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="../**/*" Exclude="../test/**/*;../_site/**/*;../api/**/*" LinkBase="Deployment" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+</Project>
