@@ -64,6 +64,8 @@ jobs:
         run: |
           dotnet build ./DotnetLibs.slnx -c Debug --no-restore /p:Deterministic=false
           dotnet build ./DotnetLibs.slnx -c Release --no-restore /p:Deterministic=false
+      - name: Run pre-test script
+        run: dotnet run ./.github/scripts/pre-test.cs
       - name: Run tests (Debug)
         run: >
           dotnet test ./DotnetLibs.slnx

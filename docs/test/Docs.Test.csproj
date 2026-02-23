@@ -6,4 +6,9 @@
   <ItemGroup>
     <Content Include="../**/*" Exclude="../test/**/*;../_site/**/*;../api/**/*" LinkBase="Deployment" CopyToOutputDirectory="Always" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Playwright" Version="*" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.*" />
+  </ItemGroup>
 </Project>

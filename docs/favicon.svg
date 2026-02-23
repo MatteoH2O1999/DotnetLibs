@@ -1,3 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 155 50">
-    <text y="45" font-family="Montserrat" font-weight="bold" font-size="60" fill="var(--darker-white)">MDA</text>
+<svg width="148.44" height="42.001" viewBox="0 0 148.44 42.001" xmlns="http://www.w3.org/2000/svg">
+  <path d="M9.12 42H0V0h8.04l17.88 29.64h-4.26L39.24 0h7.98l.12 42h-9.12l-.06-28.02h1.68L25.8 37.56h-4.38L7.08 13.98h2.04zm102.18 0h-9.96l18.72-42h9.6l18.78 42h-10.2L122.88 4.92h3.84zm-34.92 0H57.3V0h19.08q6.84 0 12.06 2.61T96.6 9.9 99.54 21q0 6.36-2.94 11.07t-8.16 7.32T76.38 42ZM67.02 7.98v26.04h8.88q4.2 0 7.29-1.59t4.8-4.53T89.7 21q0-4.02-1.71-6.93t-4.8-4.5-7.29-1.59zM137.52 33H110.7l2.58-7.38h21.6z" vector-effect="non-scaling-stroke" stroke-linecap="round" font-size="12" stroke="#000" stroke-width=".945" style="stroke:#000;stroke-width:.25mm;fill:#000"/>
 </svg>

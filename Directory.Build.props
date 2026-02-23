@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <PackageOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))\packages</PackageOutputPath>
+    <PackageOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))/packages</PackageOutputPath>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -32,6 +32,7 @@
 
   <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'false'">
     <None Include="..\README.md" Pack="true" PackagePath="/" />
+    <None Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))/docs/icon.png" Pack="true" PackagePath="/" Visible="false" />
   </ItemGroup>
 
   <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'true'">
