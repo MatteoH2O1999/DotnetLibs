@@ -81,7 +81,7 @@ namespace WaterLibs.Threading
         /// <exception cref="ArgumentOutOfRangeException">
         /// If the requested <paramref name="quantity"/> is greater than the total available resource.
         /// </exception>
-        public LockedResource Wait(ulong quantity)
+        public LockedResource Wait(ulong quantity = 1)
         {
             if (quantity > this.size)
             {
@@ -104,11 +104,21 @@ namespace WaterLibs.Threading
             return new(this, quantity);
         }
 
+        /// <summary>
+        /// Asyncronously requests and waits for a lock on <paramref name="quantity"/> of the managed resource.
+        /// </summary>
+        /// <param name="quantity">The quantity of resource to lock.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the work.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that represents the request, which wraps the <see cref="LockedResource"/> that
+        /// represents a lock on <paramref name="quantity"/> of the managed resource.
+        /// </returns>
         public Task<LockedResource> WaitAsync(ulong quantity, CancellationToken cancellationToken)
         {
             return Task.Run(() => Task.FromResult(this.Wait(quantity)), cancellationToken);
         }
 
+        /// <inheritdoc cref="WaitAsync(ulong, CancellationToken)"/>
         public Task<LockedResource> WaitAsync(ulong quantity = 1)
         {
             return this.WaitAsync(quantity, CancellationToken.None);
