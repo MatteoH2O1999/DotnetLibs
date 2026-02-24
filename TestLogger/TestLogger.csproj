@@ -8,5 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="18.0.1" />
+    <PackageReference Include="Crayon" Version="2.0.69" />
   </ItemGroup>
 </Project>

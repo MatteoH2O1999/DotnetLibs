@@ -24,6 +24,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using static Crayon.Output;
 
 namespace TestLogger
 {
@@ -52,16 +53,16 @@ namespace TestLogger
             switch (resultEvent.Result.Outcome)
             {
                 case TestOutcome.Passed:
-                    message.Append("Passed");
+                    message.Append(Bright.Green("\u2713 Passed"));
                     break;
                 case TestOutcome.Failed:
-                    message.Append("Failed");
+                    message.Append(Bright.Red("\u2718 Failed"));
                     break;
                 case TestOutcome.Skipped:
-                    message.Append("Skipped");
+                    message.Append(Rgb(223, 142, 20).Text("\u21A9 Skipped"));
                     break;
                 case TestOutcome.NotFound:
-                    message.Append("Not found");
+                    message.Append(Background.Red().White("\u26A0 Not found"));
                     break;
                 default:
                     throw new InvalidOutcomeException(resultEvent.Result.Outcome);
@@ -83,9 +84,9 @@ namespace TestLogger
             )
             {
                 message.Append("\n    ");
-                message.Append(resultEvent.Result.ErrorMessage.Replace("\n", "\n      "));
+                message.Append(Bright.Red(resultEvent.Result.ErrorMessage.Replace("\n", "\n      ")));
                 message.Append("\n    ");
-                message.Append(resultEvent.Result.ErrorStackTrace.Replace("\n", "\n      "));
+                message.Append(Bright.Red(resultEvent.Result.ErrorStackTrace.Replace("\n", "\n      ")));
             }
 
             Console.WriteLine(message);
