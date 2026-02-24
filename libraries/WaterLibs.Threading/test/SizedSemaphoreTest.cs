@@ -24,6 +24,15 @@ namespace WaterLibs.Threading.Test
     public class SizedSemaphoreTest
     {
         [TestMethod]
-        public void Dummy() { }
+        public void Constructor_NonZeroSize_Succeeds()
+        {
+            _ = new SizedSemaphore(1);
+        }
+
+        [TestMethod]
+        public void Constructor_ZeroSize_ThrowsArgumentOutOfRangeException()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = new SizedSemaphore(0));
+        }
     }
 }

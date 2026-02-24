@@ -54,6 +54,10 @@ namespace WaterLibs.Threading
         /// <param name="size">The amount of resource to manage.</param>
         public SizedSemaphore(ulong size)
         {
+            if (size == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(size), $"Semaphore size must be at least 1");
+            }
             this.current = size;
             this.size = size;
             this.internalLock = new();
@@ -86,17 +90,6 @@ namespace WaterLibs.Threading
             return new(this, quantity);
         }
 
-        private void ValidateQuantity(ulong quantity)
-        {
-            if (quantity > this.size)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(quantity),
-                    $"Requested {quantity} on a semaphore of size {this.size}."
-                );
-            }
-        }
-
         /// <summary>
         /// Requests and waits for a lock on <paramref name="quantity"/> of the managed resource.
         /// </summary>
@@ -110,8 +103,12 @@ namespace WaterLibs.Threading
         /// </exception>
         public LockedResource Wait(ulong quantity = 1)
         {
-            this.ValidateQuantity(quantity);
-            return this.DoWait(quantity);
+            return quantity > this.size
+                ? throw new ArgumentOutOfRangeException(
+                    nameof(quantity),
+                    $"Requested {quantity} on a semaphore of size {this.size}."
+                )
+                : this.DoWait(quantity);
         }
 
         /// <summary>
@@ -128,8 +125,12 @@ namespace WaterLibs.Threading
         /// </exception>
         public Task<LockedResource> WaitAsync(ulong quantity, CancellationToken cancellationToken)
         {
-            this.ValidateQuantity(quantity);
-            return Task.Run(() => Task.FromResult(this.DoWait(quantity)), cancellationToken);
+            return quantity > this.size
+                ? throw new ArgumentOutOfRangeException(
+                    nameof(quantity),
+                    $"Requested {quantity} on a semaphore of size {this.size}."
+                )
+                : Task.Run(() => Task.FromResult(this.DoWait(quantity)), cancellationToken);
         }
 
         /// <inheritdoc cref="WaitAsync(ulong, CancellationToken)"/>
