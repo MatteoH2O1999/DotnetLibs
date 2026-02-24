@@ -10,4 +10,5 @@
     <Project Path="libraries/WaterLibs.Threading/src/WaterLibs.Threading.csproj" />
     <Project Path="libraries/WaterLibs.Threading/test/WaterLibs.Threading.Test.csproj" />
   </Folder>
+  <Project Path="TestLogger/TestLogger.csproj" />
 </Solution>

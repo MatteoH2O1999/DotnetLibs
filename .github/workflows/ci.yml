@@ -70,24 +70,24 @@ jobs:
         run: >
           dotnet test ./DotnetLibs.slnx
           -c Debug
-          -v n
+          -v q
           --no-build
           -m:1
-          --consoleLoggerParameters:"NoSummary;ErrorsOnly;ForceConsoleColor"
           --nologo
           --logger:"GitHubActions;summary-include-passed=false"
+          --logger:"TestLogger"
           --
           RunConfiguration.CollectSourceInformation=true
       - name: Run tests (Release)
         run: >
           dotnet test ./DotnetLibs.slnx
           -c Release
-          -v n
+          -v q
           --no-build
           -m:1
-          --consoleLoggerParameters:"NoSummary;ErrorsOnly;ForceConsoleColor"
           --nologo
           --logger:"GitHubActions;summary-include-passed=false"
+          --logger:"TestLogger"
           --
           RunConfiguration.CollectSourceInformation=true
 
