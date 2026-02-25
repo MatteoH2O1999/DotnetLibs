@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <PackageOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))\packages</PackageOutputPath>
+    <PackageOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))/packages</PackageOutputPath>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -32,20 +32,25 @@
 
   <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'false'">
     <None Include="..\README.md" Pack="true" PackagePath="/" />
+    <None Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))/docs/icon.png" Pack="true" PackagePath="/" Visible="false" />
+    <InternalsVisibleTo Include="$(AssemblyName).Test" />
   </ItemGroup>
 
   <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'true'">
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSDKVersion)" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(VisualStudioRunnerVersion)" />
-    <Using Include="Xunit" />
+    <PackageReference Include="MSTest" Version="$(MSTestVersion)" />
+    <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
+    <ProjectReference Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))/TestLogger/TestLogger.csproj" />
+    <Using Include="AwesomeAssertions" />
+    <Using Static="true" Include="AwesomeAssertions.FluentActions" />
   </ItemGroup>
 
   <PropertyGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWIth('/test/$(MSBuildProjectFile)')) == 'true'">
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -62,15 +67,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TestSDKVersion>18.0.1</TestSDKVersion>
-    <TestSDKVersion Condition="'$(IsNetCore)' == 'True' AND '$(NetVersion)' &lt; 8">17.13.0</TestSDKVersion>
-
-    <VisualStudioRunnerVersion>3.1.5</VisualStudioRunnerVersion>
-    <VisualStudioRunnerVersion Condition="'$(IsNetCore)' == 'True' AND '$(NetVersion)' &lt; 8">2.8.2</VisualStudioRunnerVersion>
+    <MSTestVersion>4.1.0</MSTestVersion>
+    <MSTestVersion Condition="'$(IsNetCore)' == 'True' AND '$(NetVersion)' &lt; 8">3.11.1</MSTestVersion>
   </PropertyGroup>
 
   <PropertyGroup>
     <NetStandard2TestFrameworks>net472;net48;net481;net6.0;net8.0;net10.0</NetStandard2TestFrameworks>
     <NetStandard2TestFrameworks Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net6.0;net8.0;net10.0</NetStandard2TestFrameworks>
+    <LatestTestFramework>net10.0</LatestTestFramework>
   </PropertyGroup>
 </Project>

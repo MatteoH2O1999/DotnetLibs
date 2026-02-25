@@ -20,9 +20,145 @@
 
 namespace WaterLibs.Threading.Test
 {
+    [TestClass]
     public class SizedSemaphoreTest
     {
-        [Fact]
-        public void Dummy() { }
+        public TestContext TestContext { get; set; }
+
+        [TestMethod]
+        public void Constructor_NonZeroSize_Succeeds()
+        {
+            _ = new SizedSemaphore(1);
+        }
+
+        [TestMethod]
+        public void Constructor_ZeroSize_ThrowsArgumentOutOfRangeException()
+        {
+            Invoking(() => new SizedSemaphore(0)).Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [TestMethod]
+        public void Wait_QuantityLessOrEqualThenSize_Succeeds()
+        {
+            SizedSemaphore sizedSemaphore = new(2);
+
+            using LockedResource lockedResource = sizedSemaphore.Wait(1);
+        }
+
+        [TestMethod]
+        public void Wait_QuantityGreaterOrEqualThenSize_ThrowsArgumentOutOfRangeException()
+        {
+            SizedSemaphore sizedSemaphore = new(2);
+
+            sizedSemaphore.Invoking(s => s.Wait(3)).Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [TestMethod]
+        public void Wait_TotalLessOrEqualThenSize_Succeeds()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource1 = sizedSemaphore.Wait(1);
+            using LockedResource lockedResource2 = sizedSemaphore.Wait(2);
+        }
+
+        [TestMethod]
+        public void Wait_RequestAlreadyLockedResource_SucceedsWhenFreed()
+        {
+            SizedSemaphore sizedSemaphore = new(1);
+
+            LockedResource lockedResource = sizedSemaphore.Wait(1);
+            Task otherRequest = Task.Run(() => sizedSemaphore.Wait(1), TestContext.CancellationToken);
+
+            otherRequest.Wait(1000, TestContext.CancellationToken).Should().BeFalse();
+
+            lockedResource.Dispose();
+
+            otherRequest.Wait(1000, TestContext.CancellationToken).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Wait_RequestSpecificQuantity_LocksSpecificQuantity()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource = sizedSemaphore.Wait(2);
+
+            lockedResource.Quantity.Should().Be(2);
+        }
+
+        [TestMethod]
+        public void Wait_NoQuantitySpecified_DefaultsTo1()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource = sizedSemaphore.Wait();
+
+            lockedResource.Quantity.Should().Be(1);
+        }
+
+        [TestMethod]
+        public async Task WaitAsync_QuantityLessOrEqualThenSize_Succeeds()
+        {
+            SizedSemaphore sizedSemaphore = new(2);
+
+            using LockedResource lockedResource = await sizedSemaphore.WaitAsync(1, TestContext.CancellationToken);
+        }
+
+        [TestMethod]
+        public void WaitAsync_QuantityGreaterOrEqualThenSize_ThrowsArgumentOutOfRangeException()
+        {
+            SizedSemaphore sizedSemaphore = new(2);
+
+            Invoking(() => sizedSemaphore.WaitAsync(3, TestContext.CancellationToken))
+                .Should()
+                .ThrowAsync<ArgumentOutOfRangeException>();
+        }
+
+        [TestMethod]
+        public async Task WaitAsync_TotalLessOrEqualThenSize_Succeeds()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource1 = await sizedSemaphore.WaitAsync(1, TestContext.CancellationToken);
+            using LockedResource lockedResource2 = await sizedSemaphore.WaitAsync(2, TestContext.CancellationToken);
+        }
+
+        [TestMethod]
+        public async Task WaitAsync_RequestAlreadyLockedResource_SucceedsWhenFreed()
+        {
+            SizedSemaphore sizedSemaphore = new(1);
+
+            LockedResource lockedResource = await sizedSemaphore.WaitAsync(1, TestContext.CancellationToken);
+            Task otherRequest = sizedSemaphore.WaitAsync(1, TestContext.CancellationToken);
+
+            otherRequest.Wait(1000, TestContext.CancellationToken).Should().BeFalse();
+
+            lockedResource.Dispose();
+
+            otherRequest.Wait(1000, TestContext.CancellationToken).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public async Task WaitAsync_RequestSpecificQuantity_LocksSpecificQuantity()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource = await sizedSemaphore.WaitAsync(2, TestContext.CancellationToken);
+
+            lockedResource.Quantity.Should().Be(2);
+        }
+
+        [TestMethod]
+        public async Task WaitAsync_NoQuantitySpecified_DefaultsTo1()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+#pragma warning disable MSTEST0049 // Flow TestContext.CancellationToken to async operations
+            using LockedResource lockedResource = await sizedSemaphore.WaitAsync();
+#pragma warning restore MSTEST0049 // Flow TestContext.CancellationToken to async operations
+
+            lockedResource.Quantity.Should().Be(1);
+        }
     }
 }
