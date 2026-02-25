@@ -33,6 +33,7 @@
   <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'false'">
     <None Include="..\README.md" Pack="true" PackagePath="/" />
     <None Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))/docs/icon.png" Pack="true" PackagePath="/" Visible="false" />
+    <InternalsVisibleTo Include="$(AssemblyName).Test" />
   </ItemGroup>
 
   <ItemGroup Condition="$(MSBuildProjectFullPath.Replace('\', '/').EndsWith('/test/$(MSBuildProjectFile)')) == 'true'">

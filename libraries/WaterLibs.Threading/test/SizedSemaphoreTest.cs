@@ -23,6 +23,8 @@ namespace WaterLibs.Threading.Test
     [TestClass]
     public class SizedSemaphoreTest
     {
+        public TestContext TestContext { get; set; }
+
         [TestMethod]
         public void Constructor_NonZeroSize_Succeeds()
         {
@@ -33,6 +35,66 @@ namespace WaterLibs.Threading.Test
         public void Constructor_ZeroSize_ThrowsArgumentOutOfRangeException()
         {
             Invoking(() => new SizedSemaphore(0)).Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [TestMethod]
+        public void Wait_QuantityLessOrEqualThenSize_Succeeds()
+        {
+            SizedSemaphore sizedSemaphore = new(2);
+
+            using LockedResource lockedResource = sizedSemaphore.Wait(1);
+        }
+
+        [TestMethod]
+        public void Wait_QuantityGreaterOrEqualThenSize_ThrowsArgumentOutOfRangeException()
+        {
+            SizedSemaphore sizedSemaphore = new(2);
+
+            sizedSemaphore.Invoking(s => s.Wait(3)).Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [TestMethod]
+        public void Wait_TotalLessOrEqualThenSize_Succeeds()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource1 = sizedSemaphore.Wait(1);
+            using LockedResource lockedResource2 = sizedSemaphore.Wait(2);
+        }
+
+        [TestMethod]
+        public void Wait_RequestAlreadyLockedResource_SucceedsWhenFreed()
+        {
+            SizedSemaphore sizedSemaphore = new(1);
+
+            LockedResource lockedResource = sizedSemaphore.Wait(1);
+            Task otherRequest = Task.Run(() => sizedSemaphore.Wait(1), TestContext.CancellationToken);
+
+            otherRequest.Wait(1000, TestContext.CancellationToken).Should().BeFalse();
+
+            lockedResource.Dispose();
+
+            otherRequest.Wait(1000, TestContext.CancellationToken).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Wait_RequestSpecificQuantity_LocksSpecificQuantity()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource = sizedSemaphore.Wait(2);
+
+            lockedResource.Quantity.Should().Be(2);
+        }
+
+        [TestMethod]
+        public void Wait_NoQuantitySpecified_DefaultsTo1()
+        {
+            SizedSemaphore sizedSemaphore = new(4);
+
+            using LockedResource lockedResource = sizedSemaphore.Wait();
+
+            lockedResource.Quantity.Should().Be(1);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace WaterLibs.Threading
             lock (this.internalLock)
             {
                 this.current += quantity;
-                Debug.Assert(this.current >= this.size);
+                Debug.Assert(this.current <= this.size);
                 Monitor.PulseAll(this.internalLock);
             }
         }
