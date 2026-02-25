@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using AwesomeAssertions;
 using Microsoft.Playwright;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

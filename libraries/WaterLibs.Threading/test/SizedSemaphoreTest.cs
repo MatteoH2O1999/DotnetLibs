@@ -32,7 +32,7 @@ namespace WaterLibs.Threading.Test
         [TestMethod]
         public void Constructor_ZeroSize_ThrowsArgumentOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => _ = new SizedSemaphore(0));
+            Invoking(() => new SizedSemaphore(0)).Should().Throw<ArgumentOutOfRangeException>();
         }
     }
 }
