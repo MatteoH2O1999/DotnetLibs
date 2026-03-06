@@ -154,9 +154,7 @@ namespace WaterLibs.Threading.Test
         {
             SizedSemaphore sizedSemaphore = new(4);
 
-#pragma warning disable MSTEST0049 // Flow TestContext.CancellationToken to async operations
             using LockedResource lockedResource = await sizedSemaphore.WaitAsync();
-#pragma warning restore MSTEST0049 // Flow TestContext.CancellationToken to async operations
 
             lockedResource.Quantity.Should().Be(1);
         }

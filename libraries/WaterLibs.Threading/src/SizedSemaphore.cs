@@ -101,7 +101,7 @@ namespace WaterLibs.Threading
         /// <exception cref="ArgumentOutOfRangeException">
         /// If the requested <paramref name="quantity"/> is greater than the total available resource.
         /// </exception>
-        public LockedResource Wait(ulong quantity = 1)
+        public LockedResource Wait(ulong quantity)
         {
             return quantity > this.size
                 ? throw new ArgumentOutOfRangeException(
@@ -109,6 +109,18 @@ namespace WaterLibs.Threading
                     $"Requested {quantity} on a semaphore of size {this.size}."
                 )
                 : this.DoWait(quantity);
+        }
+
+        /// <summary>
+        /// Requests and waits for a lock on a single unit of the managed resource.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="LockedResource"/> that represents a lock on a single unit
+        /// of the managed resource.
+        /// </returns>
+        public LockedResource Wait()
+        {
+            return this.DoWait(1);
         }
 
         /// <summary>
@@ -134,9 +146,21 @@ namespace WaterLibs.Threading
         }
 
         /// <inheritdoc cref="WaitAsync(ulong, CancellationToken)"/>
-        public Task<LockedResource> WaitAsync(ulong quantity = 1)
+        public Task<LockedResource> WaitAsync(ulong quantity)
         {
             return this.WaitAsync(quantity, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Asyncronously requests and waits for a lock on a single unit of the managed resource.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="Task"/> that represents the request, which wraps the <see cref="LockedResource"/> that
+        /// represents a lock on a singe unit of the managed resource.
+        /// </returns>
+        public Task<LockedResource> WaitAsync()
+        {
+            return this.WaitAsync(1);
         }
     }
 }
