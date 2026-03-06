@@ -2,9 +2,13 @@
   <Folder Name="/Solution Items/">
     <File Path="Directory.Build.props" />
   </Folder>
+  <Folder Name="/Solution Items/Docs/">
+    <Project Path="docs/test/Docs.Test.csproj" />
+  </Folder>
   <Folder Name="/WaterLibs/" />
   <Folder Name="/WaterLibs/Threading/">
     <Project Path="libraries/WaterLibs.Threading/src/WaterLibs.Threading.csproj" />
     <Project Path="libraries/WaterLibs.Threading/test/WaterLibs.Threading.Test.csproj" />
   </Folder>
+  <Project Path="TestLogger/TestLogger.csproj" />
 </Solution>
