@@ -5,6 +5,7 @@
 *.cs eol=lf
 *.csproj eol=lf
 *.slnx eol=lf
+*.svg eol=lf
 
 ###############################################################################
 # Set default behavior for command prompt diff.

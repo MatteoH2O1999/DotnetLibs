@@ -1,4 +1,3 @@
 ---
-layout: _landing
+redirect_url: /api
 ---
-
